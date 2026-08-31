@@ -167,6 +167,37 @@
         </div>
     </div>
 
+    <!-- ===== WIN / LOSS / DRAW BANNER OVERLAY ===== -->
+    <!-- MISSING FEATURE FIX: Prominent end-of-game announcement matching neon arena theme -->
+    <div id="winBanner" class="win-banner-overlay" role="dialog" aria-modal="true" aria-labelledby="winBannerTitle">
+        <div class="win-banner-card" id="winBannerCard">
+            <!-- Animated neon corner accents -->
+            <div class="win-banner-corner tl"></div>
+            <div class="win-banner-corner tr"></div>
+            <div class="win-banner-corner bl"></div>
+            <div class="win-banner-corner br"></div>
+
+            <!-- Victory / Draw icon -->
+            <div class="win-banner-icon" id="winBannerIcon">🏆</div>
+
+            <!-- Winner announcement -->
+            <h2 class="win-banner-title" id="winBannerTitle">PLAYER 1 WINS!</h2>
+
+            <!-- Reason sub-text -->
+            <p class="win-banner-reason" id="winBannerReason">All opponent pieces captured</p>
+
+            <!-- Divider -->
+            <div class="win-banner-divider"></div>
+
+            <!-- Action buttons -->
+            <div class="win-banner-actions">
+                <button id="btnPlayAgain" class="btn-play-again">
+                    <span>🔄</span> Play Again
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Application Script -->
     <script type="module" src="js/app.js"></script>
 </body>

@@ -583,3 +583,219 @@ main {
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 240, 255, 0.4);
 }
+
+/* ============================================================
+   WIN / LOSS / DRAW BANNER OVERLAY
+   MISSING FEATURE FIX: Prominent end-of-game announcement
+   ============================================================ */
+
+.win-banner-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 6, 18, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+    /* Hidden by default — toggled via JS */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.win-banner-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.win-banner-card {
+    position: relative;
+    background: linear-gradient(145deg, rgba(13, 18, 36, 0.96), rgba(7, 9, 19, 0.98));
+    border: 2px solid var(--cyan-glow);
+    border-radius: 24px;
+    padding: 44px 52px 40px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow:
+        0 0 60px rgba(0, 240, 255, 0.25),
+        0 0 120px rgba(0, 240, 255, 0.1),
+        inset 0 0 40px rgba(0, 0, 0, 0.6);
+    animation: bannerEntrance 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    overflow: visible;
+}
+
+/* Variant: Player 2 / AI wins */
+.win-banner-card.magenta-theme {
+    border-color: var(--magenta-glow);
+    box-shadow:
+        0 0 60px rgba(255, 0, 127, 0.25),
+        0 0 120px rgba(255, 0, 127, 0.1),
+        inset 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Variant: Draw */
+.win-banner-card.gold-theme {
+    border-color: var(--accent-gold);
+    box-shadow:
+        0 0 60px rgba(251, 191, 36, 0.25),
+        0 0 120px rgba(251, 191, 36, 0.1),
+        inset 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes bannerEntrance {
+    0%   { opacity: 0; transform: scale(0.78) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Animated corner accents */
+.win-banner-corner {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-color: var(--cyan-glow);
+    border-style: solid;
+    animation: cornerPulse 1.8s ease-in-out infinite;
+}
+.win-banner-card.magenta-theme .win-banner-corner { border-color: var(--magenta-glow); }
+.win-banner-card.gold-theme .win-banner-corner    { border-color: var(--accent-gold); }
+
+.win-banner-corner.tl { top: 10px; left: 10px;  border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
+.win-banner-corner.tr { top: 10px; right: 10px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
+.win-banner-corner.bl { bottom: 10px; left: 10px;  border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
+.win-banner-corner.br { bottom: 10px; right: 10px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
+
+@keyframes cornerPulse {
+    0%, 100% { opacity: 0.4; }
+    50%       { opacity: 1; }
+}
+
+/* Trophy / icon */
+.win-banner-icon {
+    font-size: 62px;
+    line-height: 1;
+    margin-bottom: 16px;
+    display: block;
+    filter: drop-shadow(0 0 16px var(--accent-gold));
+    animation: trophyFloat 2.5s ease-in-out infinite;
+}
+
+@keyframes trophyFloat {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50%       { transform: translateY(-8px) rotate(3deg); }
+}
+
+/* Winner headline */
+.win-banner-title {
+    font-family: var(--font-title);
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, var(--cyan-glow), #ffffff, var(--cyan-glow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: shimmerText 2.5s linear infinite;
+}
+
+.win-banner-card.magenta-theme .win-banner-title {
+    background: linear-gradient(135deg, var(--magenta-glow), #ffffff, var(--magenta-glow));
+    -webkit-background-clip: text;
+    background-size: 200% 200%;
+}
+
+.win-banner-card.gold-theme .win-banner-title {
+    background: linear-gradient(135deg, var(--accent-gold), #ffffff, var(--accent-gold));
+    -webkit-background-clip: text;
+    background-size: 200% 200%;
+}
+
+@keyframes shimmerText {
+    0%   { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}
+
+/* Win reason */
+.win-banner-reason {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 0;
+}
+
+/* Divider */
+.win-banner-divider {
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan-glow), transparent);
+    margin: 24px auto;
+    opacity: 0.5;
+}
+.win-banner-card.magenta-theme .win-banner-divider {
+    background: linear-gradient(90deg, transparent, var(--magenta-glow), transparent);
+}
+.win-banner-card.gold-theme .win-banner-divider {
+    background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+}
+
+/* Actions row */
+.win-banner-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* Play Again button */
+.btn-play-again {
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(0, 240, 255, 0.08));
+    border: 1px solid var(--cyan-glow);
+    color: var(--cyan-glow);
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-family: var(--font-title);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.2);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.win-banner-card.magenta-theme .btn-play-again {
+    background: linear-gradient(135deg, rgba(255, 0, 127, 0.15), rgba(255, 0, 127, 0.08));
+    border-color: var(--magenta-glow);
+    color: var(--magenta-glow);
+    box-shadow: 0 0 16px rgba(255, 0, 127, 0.2);
+}
+
+.win-banner-card.gold-theme .btn-play-again {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.08));
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+    box-shadow: 0 0 16px rgba(251, 191, 36, 0.2);
+}
+
+.btn-play-again:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 0 28px rgba(0, 240, 255, 0.45);
+}
+.win-banner-card.magenta-theme .btn-play-again:hover {
+    box-shadow: 0 0 28px rgba(255, 0, 127, 0.45);
+}
+.win-banner-card.gold-theme .btn-play-again:hover {
+    box-shadow: 0 0 28px rgba(251, 191, 36, 0.45);
+}
+
+.btn-play-again:active {
+    transform: translateY(0) scale(0.97);
+}
+
