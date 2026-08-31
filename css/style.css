@@ -225,14 +225,14 @@ main {
     font-family: var(--font-mono);
 }
 
-/* Gravity Shift Hero Button */
-.gravity-shift-container {
+/* Polarity Shift Hero Button */
+.polarity-shift-container {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.btn-gravity {
+.btn-polarity {
     position: relative;
     background: linear-gradient(135deg, #1e1b4b, #4c1d95);
     border: 1px solid #8b5cf6;
@@ -253,24 +253,24 @@ main {
     overflow: hidden;
 }
 
-.btn-gravity:hover:not(:disabled) {
+.btn-polarity:hover:not(:disabled) {
     transform: scale(1.02);
     box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
     border-color: #c084fc;
 }
 
-.btn-gravity:active:not(:disabled) {
+.btn-polarity:active:not(:disabled) {
     transform: scale(0.98);
 }
 
-.btn-gravity:disabled {
+.btn-polarity:disabled {
     opacity: 0.4;
     cursor: not-allowed;
     filter: grayscale(0.8);
     box-shadow: none;
 }
 
-.gravity-indicator-dot {
+.polarity-indicator-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
@@ -284,7 +284,7 @@ main {
     50% { opacity: 1; transform: scale(1.3); }
 }
 
-.gravity-hint {
+.polarity-hint {
     font-size: 11px;
     color: var(--text-muted);
     line-height: 1.4;

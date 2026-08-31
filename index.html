@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antigravity Checkers Battle Arena | Dynamic Programming AI</title>
-    <meta name="description" content="Futuristic Antigravity Checkers game featuring Minimax AI with Alpha-Beta pruning, Zobrist Hashing Dynamic Programming Transposition Table, and Gravity Shift mechanics.">
+    <title>Quantum Shift Checkers | Dynamic Programming AI Engine</title>
+    <meta name="description" content="Futuristic Quantum Shift Checkers game featuring Minimax AI with Alpha-Beta pruning, Zobrist Hashing Dynamic Programming Transposition Table, and Polarity Shift mechanics.">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,7 +14,7 @@
         <div class="logo-section">
             <div class="logo-icon">🪐</div>
             <div>
-                <h1>ANTIGRAVITY CHECKERS</h1>
+                <h1>QUANTUM SHIFT CHECKERS</h1>
                 <span class="badge-daa">DAA • Dynamic Programming Engine</span>
             </div>
         </div>
@@ -27,7 +27,7 @@
 
     <!-- Main Battle Arena -->
     <main>
-        <!-- Left Dock: Mission Controls & Gravity Engine -->
+        <!-- Left Dock: Mission Controls & Polarity Engine -->
         <div class="glass-card">
             <div class="card-title">
                 <span>🎮</span> Arena Controls
@@ -44,17 +44,17 @@
                 </div>
             </div>
 
-            <!-- Gravity Shift Core Mechanic -->
-            <div class="gravity-shift-container">
-                <button id="btnGravityShift" class="btn-gravity">
-                    <div class="gravity-indicator-dot"></div>
-                    <span>⚡ TRIGGER GRAVITY SHIFT</span>
+            <!-- Polarity Shift Core Mechanic -->
+            <div class="polarity-shift-container">
+                <button id="btnPolarityShift" class="btn-polarity">
+                    <div class="polarity-indicator-dot"></div>
+                    <span>⚡ TRIGGER POLARITY SHIFT</span>
                 </button>
-                <div id="gravityStatusHint" class="gravity-hint">
+                <div id="polarityStatusHint" class="polarity-hint">
                     P1 Charge: READY | P2 Charge: READY
                 </div>
-                <div class="gravity-hint" style="opacity: 0.7;">
-                    *Flips the gravitational vector 180°. All regular pieces reverse their forward march direction. (1 use per player).
+                <div class="polarity-hint" style="opacity: 0.7;">
+                    *Inverts the directional polarity 180°. All regular pieces reverse their forward march direction. (1 use per player).
                 </div>
             </div>
 
@@ -75,7 +75,7 @@
                     <input type="range" id="depthSlider" min="2" max="10" value="6" step="1">
                     <div id="depthSliderVal" class="slider-value">6</div>
                 </div>
-                <div class="gravity-hint">
+                <div class="polarity-hint">
                     Higher depths trigger extensive Transposition Table memoization.
                 </div>
             </div>
@@ -146,7 +146,7 @@
 
             <h3>2. 64-Bit Zobrist State Hashing</h3>
             <p>
-                Board states are mapped to 64-bit integer keys using precomputed pseudo-random bitstrings for each square, piece type, active turn, and gravity inversion state. Updates are performed in <code>O(1)</code> time via incremental <code>XOR (^)</code> bitwise operations on moves and captures.
+                Board states are mapped to 64-bit integer keys using precomputed pseudo-random bitstrings for each square, piece type, active turn, and polarity inversion state. Updates are performed in <code>O(1)</code> time via incremental <code>XOR (^)</code> bitwise operations on moves and captures.
             </p>
 
             <h3>3. Transposition Table Memoization & Bound Flags</h3>
@@ -158,9 +158,9 @@
                 <br>• <code>Best Move</code>: Reused in subsequent iterations for Move Ordering, driving Alpha-Beta pruning near optimal <code>O(b^(d/2))</code> complexity.
             </p>
 
-            <h3>4. Antigravity & Gravity Shift Mechanics</h3>
+            <h3>4. Quantum Polarity Shift Mechanics</h3>
             <p>
-                Each player can activate "Gravity Shift" once per game, inverting the board's directional vector 180° for all standard pieces and dynamically swapping King promotion ranks.
+                Each player can activate "Polarity Shift" once per game, inverting the board's directional vector 180° for all standard pieces and dynamically swapping King promotion ranks.
             </p>
 
             <button id="btnCloseModal" class="btn-close-modal">Close Analysis</button>

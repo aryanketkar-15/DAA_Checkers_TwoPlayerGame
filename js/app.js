@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const turnDotElem = document.getElementById('turnPlayerDot');
     const gameStatusElem = document.getElementById('gameStatusText');
     const mandatoryAlertElem = document.getElementById('mandatoryJumpAlert');
-    const btnGravityShift = document.getElementById('btnGravityShift');
-    const gravityStatusHint = document.getElementById('gravityStatusHint');
+    const btnPolarityShift = document.getElementById('btnPolarityShift');
+    const polarityStatusHint = document.getElementById('polarityStatusHint');
 
     // DP Analytics Elements
     const dpDepthVal = document.getElementById('dpDepthVal');
@@ -86,8 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
         game.setAIDifficulty(val);
     });
 
-    // Gravity Shift Button
-    btnGravityShift.addEventListener('click', () => {
+    // Polarity Shift Button
+    btnPolarityShift.addEventListener('click', () => {
         if (game.triggerGravityShift(game.currentTurn)) {
             updateUI();
         }
@@ -218,12 +218,12 @@ document.addEventListener('DOMContentLoaded', () => {
             mandatoryAlertElem.classList.remove('active');
         }
 
-        // Gravity Button State
+        // Polarity Button State
         const canShift = game.canPlayerShiftGravity(game.currentTurn);
-        btnGravityShift.disabled = !canShift;
+        btnPolarityShift.disabled = !canShift;
         const p1Used = game.p1GravityUsed;
         const p2Used = game.p2GravityUsed;
-        gravityStatusHint.textContent = `P1 Charge: ${p1Used ? 'EXHAUSTED' : 'READY'} | P2 Charge: ${p2Used ? 'EXHAUSTED' : 'READY'}`;
+        polarityStatusHint.textContent = `P1 Charge: ${p1Used ? 'EXHAUSTED' : 'READY'} | P2 Charge: ${p2Used ? 'EXHAUSTED' : 'READY'}`;
 
         // DP Telemetry Stats
         const aiMetrics = game.aiAgent.metrics;

@@ -8,9 +8,9 @@
 
 void printBanner() {
     std::cout << "\n======================================================================\n";
-    std::cout << "        ANTIGRAVITY CHECKERS BATTLE ARENA (C++ DAA ENGINE)            \n";
+    std::cout << "        QUANTUM SHIFT CHECKERS ARENA (C++ DAA ENGINE)                 \n";
     std::cout << "  Featuring: Minimax + Alpha-Beta + Zobrist DP Transposition Table    \n";
-    std::cout << "             Gravity Shift 180-Degree Inversion Mechanics             \n";
+    std::cout << "             Polarity Shift 180-Degree Inversion Mechanics            \n";
     std::cout << "======================================================================\n\n";
 }
 
@@ -60,7 +60,7 @@ void playGame(GameMode mode, int aiDepth) {
     GameManager game(mode, aiDepth);
 
     std::cout << "\nGame started! Coordinates format: fromRow fromCol toRow toCol (e.g. '5 0 4 1')\n";
-    std::cout << "Special commands: 'g' (Gravity Shift), 'q' (Quit), 'h' (Help)\n\n";
+    std::cout << "Special commands: 'p' / 'g' (Polarity Shift), 'q' (Quit), 'h' (Help)\n\n";
 
     while (game.status == IN_PROGRESS) {
         game.board.displayBoard();
@@ -68,7 +68,7 @@ void playGame(GameMode mode, int aiDepth) {
         Player current = game.currentTurn;
         std::cout << "Turn: " << (current == PLAYER_1 ? "PLAYER 1 (Neon Cyan)" : "PLAYER 2 (Neon Magenta)");
         bool gravUsed = (current == PLAYER_1) ? game.p1GravityUsed : game.p2GravityUsed;
-        std::cout << " | Gravity Shift: " << (gravUsed ? "[EXHAUSTED]" : "[READY]") << "\n";
+        std::cout << " | Polarity Shift: " << (gravUsed ? "[EXHAUSTED]" : "[READY]") << "\n";
 
         if (game.isCurrentPlayerAI()) {
             std::cout << "AI is computing optimal move with Minimax + DP Transposition Table...\n";
@@ -99,7 +99,7 @@ void playGame(GameMode mode, int aiDepth) {
                           << (m.becameKing ? " [KING PROMOTION!]" : "") << "\n";
             }
 
-            std::cout << "\nEnter move (e.g. '5 0 4 1' or move index '1') or 'g' for Gravity Shift: ";
+            std::cout << "\nEnter move (e.g. '5 0 4 1' or move index '1') or 'p'/'g' for Polarity Shift: ";
             std::string input;
             std::getline(std::cin, input);
 
@@ -108,11 +108,11 @@ void playGame(GameMode mode, int aiDepth) {
                 return;
             }
 
-            if (input == "g" || input == "G") {
+            if (input == "p" || input == "P" || input == "g" || input == "G") {
                 if (game.triggerGravityShift(current)) {
-                    std::cout << "\n>>> [GRAVITY SHIFT ACTIVATED! THE ARENA FLIPS 180 DEGREES!] <<<\n\n";
+                    std::cout << "\n>>> [POLARITY SHIFT ACTIVATED! THE ARENA FLIPS 180 DEGREES!] <<<\n\n";
                 } else {
-                    std::cout << "\n[!] Gravity Shift not available or already used this match!\n\n";
+                    std::cout << "\n[!] Polarity Shift not available or already used this match!\n\n";
                 }
                 continue;
             }
@@ -174,7 +174,7 @@ int main() {
         }
 
         if (choice == 5) {
-            std::cout << "Exiting Antigravity Checkers. Goodbye!\n";
+            std::cout << "Exiting Quantum Shift Checkers. Goodbye!\n";
             break;
         }
 
