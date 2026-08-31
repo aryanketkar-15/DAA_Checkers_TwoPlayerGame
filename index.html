@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity Checkers Battle Arena | Dynamic Programming AI</title>
+    <meta name="description" content="Futuristic Antigravity Checkers game featuring Minimax AI with Alpha-Beta pruning, Zobrist Hashing Dynamic Programming Transposition Table, and Gravity Shift mechanics.">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Arena Header -->
+    <header>
+        <div class="logo-section">
+            <div class="logo-icon">🪐</div>
+            <div>
+                <h1>ANTIGRAVITY CHECKERS</h1>
+                <span class="badge-daa">DAA • Dynamic Programming Engine</span>
+            </div>
+        </div>
+        <div class="header-controls">
+            <button id="btnShowDaaModal" class="btn-pill" title="View Algorithm Analysis">📊 DP Architecture</button>
+            <button id="btnAudioToggle" class="btn-pill">🔊 Audio ON</button>
+            <button id="btnRestart" class="btn-pill">🔄 Restart Arena</button>
+        </div>
+    </header>
+
+    <!-- Main Battle Arena -->
+    <main>
+        <!-- Left Dock: Mission Controls & Gravity Engine -->
+        <div class="glass-card">
+            <div class="card-title">
+                <span>🎮</span> Arena Controls
+            </div>
+
+            <!-- Turn Banner -->
+            <div class="turn-banner">
+                <div class="player-indicator">
+                    <div id="turnPlayerDot" class="player-dot cyan"></div>
+                    <div>
+                        <div id="turnPlayerName" class="player-name">PLAYER 1 (Cyan)</div>
+                        <div id="gameStatusText" class="game-status-text">Arena Active</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gravity Shift Core Mechanic -->
+            <div class="gravity-shift-container">
+                <button id="btnGravityShift" class="btn-gravity">
+                    <div class="gravity-indicator-dot"></div>
+                    <span>⚡ TRIGGER GRAVITY SHIFT</span>
+                </button>
+                <div id="gravityStatusHint" class="gravity-hint">
+                    P1 Charge: READY | P2 Charge: READY
+                </div>
+                <div class="gravity-hint" style="opacity: 0.7;">
+                    *Flips the gravitational vector 180°. All regular pieces reverse their forward march direction. (1 use per player).
+                </div>
+            </div>
+
+            <!-- Game Mode Selector -->
+            <div class="control-group">
+                <div class="control-label">Combat Mode</div>
+                <div class="segmented-control">
+                    <button id="btnModePvC" class="segmented-btn active">Player vs AI</button>
+                    <button id="btnModePvP" class="segmented-btn">PvP Hotseat</button>
+                    <button id="btnModeCvC" class="segmented-btn">AI vs AI</button>
+                </div>
+            </div>
+
+            <!-- AI Difficulty / Search Depth Slider -->
+            <div class="control-group">
+                <div class="control-label">AI Minimax Lookahead Depth</div>
+                <div class="slider-container">
+                    <input type="range" id="depthSlider" min="2" max="10" value="6" step="1">
+                    <div id="depthSliderVal" class="slider-value">6</div>
+                </div>
+                <div class="gravity-hint">
+                    Higher depths trigger extensive Transposition Table memoization.
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Arena: Floating Canvas -->
+        <div class="arena-center">
+            <div id="mandatoryJumpAlert" class="mandatory-jump-alert">
+                ⚠️ MANDATORY JUMP IN EFFECT! You must capture!
+            </div>
+            <div id="canvasWrapper" class="canvas-wrapper">
+                <canvas id="gameCanvas" width="600" height="600"></canvas>
+            </div>
+        </div>
+
+        <!-- Right Dock: Dynamic Programming Telemetry & Move Log -->
+        <div class="glass-card">
+            <div class="card-title">
+                <span>⚡</span> DP Memoization Telemetry
+            </div>
+
+            <div class="dp-stats-grid">
+                <div class="stat-box">
+                    <div class="stat-name">Search Depth</div>
+                    <div id="dpDepthVal" class="stat-value">6</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-name">Nodes Evaluated</div>
+                    <div id="dpNodesVal" class="stat-value">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-name">Computation Time</div>
+                    <div id="dpTimeVal" class="stat-value purple">0 ms</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-name">DP Cache Entries</div>
+                    <div id="dpTableSizeVal" class="stat-value magenta">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-name">Subtree Cutoffs</div>
+                    <div id="dpCutoffsVal" class="stat-value gold">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-name">DP Hit Rate</div>
+                    <div id="dpHitRateVal" class="stat-value">0%</div>
+                </div>
+            </div>
+
+            <div class="card-title" style="margin-top: 8px;">
+                <span>📜</span> Arena Combat Log
+            </div>
+
+            <div id="moveLogContainer" class="move-log-container">
+                <!-- Move entries dynamically populated -->
+            </div>
+        </div>
+    </main>
+
+    <!-- DAA & Dynamic Programming Theory Modal -->
+    <div id="daaModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Dynamic Programming & DAA Architecture</h2>
+            
+            <h3>1. Optimal Substructure & Overlapping Subproblems</h3>
+            <p>
+                In standard game-tree searches, identical board layouts (transpositions) are reached through different move orderings. Without Dynamic Programming memoization, Minimax scales exponentially at <code>O(b^d)</code>. By caching solved subproblems in a Transposition Table, we achieve instantaneous <code>O(1)</code> subtree evaluations.
+            </p>
+
+            <h3>2. 64-Bit Zobrist State Hashing</h3>
+            <p>
+                Board states are mapped to 64-bit integer keys using precomputed pseudo-random bitstrings for each square, piece type, active turn, and gravity inversion state. Updates are performed in <code>O(1)</code> time via incremental <code>XOR (^)</code> bitwise operations on moves and captures.
+            </p>
+
+            <h3>3. Transposition Table Memoization & Bound Flags</h3>
+            <p>
+                Cached entries store:
+                <br>• <code>FLAG_EXACT</code>: Precise Minimax evaluation (α &lt; score &lt; β).
+                <br>• <code>FLAG_LOWERBOUND</code>: Beta cutoff (score ≥ β).
+                <br>• <code>FLAG_UPPERBOUND</code>: Alpha cutoff (score ≤ α).
+                <br>• <code>Best Move</code>: Reused in subsequent iterations for Move Ordering, driving Alpha-Beta pruning near optimal <code>O(b^(d/2))</code> complexity.
+            </p>
+
+            <h3>4. Antigravity & Gravity Shift Mechanics</h3>
+            <p>
+                Each player can activate "Gravity Shift" once per game, inverting the board's directional vector 180° for all standard pieces and dynamically swapping King promotion ranks.
+            </p>
+
+            <button id="btnCloseModal" class="btn-close-modal">Close Analysis</button>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Binaries and build artifacts
+*.exe
+*.o
+*.obj
+build/
+.vscode/
+.idea/
+
+# Operating System files
+.DS_Store
+Thumbs.db
