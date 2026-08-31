@@ -53,6 +53,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const daaModal = document.getElementById('daaModal');
     const btnCloseModal = document.getElementById('btnCloseModal');
 
+    // Win Banner DOM References (MISSING FEATURE FIX)
+    const winBanner = document.getElementById('winBanner');
+    const winBannerCard = document.getElementById('winBannerCard');
+    const winBannerIcon = document.getElementById('winBannerIcon');
+    const winBannerTitle = document.getElementById('winBannerTitle');
+    const winBannerReason = document.getElementById('winBannerReason');
+    const btnPlayAgain = document.getElementById('btnPlayAgain');
+
+    // Track whether we've already triggered the win banner for the current game-over
+    // to prevent updateUI() from re-showing it on every animation frame tick.
+    let winBannerShown = false;
+
     // --- EVENT HANDLERS ---
 
     // Game Mode Selection
@@ -99,6 +111,17 @@ document.addEventListener('DOMContentLoaded', () => {
         renderer.selectedSquare = null;
         renderer.validMovesForSelected = [];
         renderer.lastMove = null;
+        hideWinBanner();
+        updateUI();
+    });
+
+    // Play Again (Win Banner) — resets game and hides banner
+    btnPlayAgain.addEventListener('click', () => {
+        game.resetGame();
+        renderer.selectedSquare = null;
+        renderer.validMovesForSelected = [];
+        renderer.lastMove = null;
+        hideWinBanner();
         updateUI();
     });
 
@@ -181,6 +204,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- UI UPDATER ---
+
+    /**
+     * Returns the display label for a given player, driven by the current combat mode.
+     * CvC → "AGENT 1" / "AGENT 2"
+     * PvP → "PLAYER 1" / "PLAYER 2"
+     * PvC → "PLAYER 1" / "AI AGENT"
+     *
+     * @param {number} player - PLAYER_1 or PLAYER_2
+     * @param {boolean} [short=false] - true returns short form ("A1", "P1", "AI") for move log
+     * @returns {string}
+     */
+    function getPlayerLabel(player, short = false) {
+        const isCvC = game.mode === MODE_CVC;
+        const isPvP = game.mode === MODE_PVP;
+
+        if (player === PLAYER_1) {
+            if (short) return isCvC ? 'A1' : 'P1';
+            return isCvC ? 'AGENT 1 (Neon Cyan)' : 'PLAYER 1 (Neon Cyan)';
+        } else {
+            if (short) return isCvC ? 'A2' : (isPvP ? 'P2' : 'AI');
+            if (isCvC) return 'AGENT 2 (Neon Magenta)';
+            if (isPvP) return 'PLAYER 2 (Neon Magenta)';
+            return 'AI AGENT (Neon Magenta)';
+        }
+    }
+
     function updateUI() {
         // Visual Board Flip
         if (game.board.isGravityInverted) {
@@ -189,19 +238,24 @@ document.addEventListener('DOMContentLoaded', () => {
             canvasWrapper.classList.remove('gravity-flipped');
         }
 
-        // Turn indicator
+        // Turn indicator — label driven by getPlayerLabel() so it respects combat mode
         const isP1 = game.currentTurn === PLAYER_1;
-        turnNameElem.textContent = isP1 ? 'PLAYER 1 (Neon Cyan)' : (game.mode === MODE_PVP ? 'PLAYER 2 (Neon Magenta)' : 'AI AGENT (Neon Magenta)');
+        turnNameElem.textContent = getPlayerLabel(game.currentTurn);
         turnDotElem.className = `player-dot ${isP1 ? 'cyan' : 'magenta'}`;
 
-        // Game Status
+        // Game Status text (small status line — still updated even with banner)
         if (game.isGameOver) {
             if (game.winner === PLAYER_1) {
-                gameStatusElem.textContent = 'VICTORY: PLAYER 1 WINS!';
+                gameStatusElem.textContent = `VICTORY: ${getPlayerLabel(PLAYER_1, true)} WINS!`;
             } else if (game.winner === PLAYER_2) {
-                gameStatusElem.textContent = game.mode === MODE_PVP ? 'VICTORY: PLAYER 2 WINS!' : 'VICTORY: AI AGENT WINS!';
+                gameStatusElem.textContent = `VICTORY: ${getPlayerLabel(PLAYER_2, true)} WINS!`;
             } else {
                 gameStatusElem.textContent = 'MATCH DRAWN!';
+            }
+
+            // MISSING FEATURE FIX: Show the full win banner on first detection
+            if (!winBannerShown) {
+                showWinBanner();
             }
         } else if (game.isAIThinking) {
             gameStatusElem.textContent = 'AI Computing Optimal Minimax Branch...';
@@ -223,7 +277,9 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPolarityShift.disabled = !canShift;
         const p1Used = game.p1GravityUsed;
         const p2Used = game.p2GravityUsed;
-        polarityStatusHint.textContent = `P1 Charge: ${p1Used ? 'EXHAUSTED' : 'READY'} | P2 Charge: ${p2Used ? 'EXHAUSTED' : 'READY'}`;
+        const lbl1 = game.mode === MODE_CVC ? 'A1' : 'P1';
+        const lbl2 = game.mode === MODE_CVC ? 'A2' : 'P2';
+        polarityStatusHint.textContent = `${lbl1} Charge: ${p1Used ? 'EXHAUSTED' : 'READY'} | ${lbl2} Charge: ${p2Used ? 'EXHAUSTED' : 'READY'}`;
 
         // DP Telemetry Stats
         const aiMetrics = game.aiAgent.metrics;
@@ -239,13 +295,59 @@ document.addEventListener('DOMContentLoaded', () => {
         renderMoveLog();
     }
 
+    /**
+     * MISSING FEATURE FIX: Displays the neon win/loss/draw banner overlay.
+     * Populates winner name, win reason, and applies the correct color theme
+     * (cyan for P1 win, magenta for P2/AI win, gold for draw).
+     */
+    function showWinBanner() {
+        winBannerShown = true;
+
+        const { winner, winReason, mode } = game;
+
+        // Reset theme classes
+        winBannerCard.classList.remove('magenta-theme', 'gold-theme');
+
+        if (winner === PLAYER_1) {
+            // In CvC: "AGENT 1 WINS!", otherwise "PLAYER 1 WINS!"
+            winBannerTitle.textContent = mode === MODE_CVC ? 'AGENT 1 WINS!' : 'PLAYER 1 WINS!';
+            winBannerIcon.textContent = '🏆';
+            // Card stays default cyan theme
+        } else if (winner === PLAYER_2) {
+            // CvC → Agent 2, PvP → Player 2, PvC → AI Agent
+            const name = mode === MODE_CVC ? 'AGENT 2 WINS!' : (mode === MODE_PVP ? 'PLAYER 2 WINS!' : 'AI AGENT WINS!');
+            winBannerTitle.textContent = name;
+            winBannerIcon.textContent = mode === MODE_CVC ? '🤖' : (mode === MODE_PVP ? '🏆' : '🤖');
+            winBannerCard.classList.add('magenta-theme');
+        } else {
+            // Draw
+            winBannerTitle.textContent = 'MATCH DRAWN!';
+            winBannerIcon.textContent = '🤝';
+            winBannerCard.classList.add('gold-theme');
+        }
+
+        // Populate the reason string (set by GameManager.checkGameOver)
+        winBannerReason.textContent = winReason || '';
+
+        // Show overlay
+        winBanner.classList.add('active');
+    }
+
+    /**
+     * Hides the win banner and resets the shown flag so it can fire again next game.
+     */
+    function hideWinBanner() {
+        winBannerShown = false;
+        winBanner.classList.remove('active');
+    }
+
     function renderMoveLog() {
         moveLogContainer.innerHTML = '';
         game.moveHistory.slice(-15).reverse().forEach(item => {
             const row = document.createElement('div');
             row.className = `move-log-item ${item.player === PLAYER_1 ? 'cyan' : 'magenta'}`;
             const m = item.move;
-            const pName = item.player === PLAYER_1 ? 'P1' : 'P2/AI';
+            const pName = getPlayerLabel(item.player, true);
             const action = m.isJump() ? `JUMP (${m.captured.length})` : 'MOVE';
             const promo = m.becameKing ? ' 👑' : '';
             row.innerHTML = `<span>[${item.timestamp}] ${pName} ${action}</span><span>(${m.fromRow},${m.fromCol})➔(${m.toRow},${m.toCol})${promo}</span>`;
