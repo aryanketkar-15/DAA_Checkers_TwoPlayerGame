@@ -34,8 +34,9 @@ export class Renderer {
         this.renderPieces(board);
 
         // 4. Render Selection & Valid Move Highlights
+        // Pass board so renderSelection can look up piece ownership for dynamic color
         if (this.selectedSquare) {
-            this.renderSelection(this.selectedSquare);
+            this.renderSelection(this.selectedSquare, board);
             this.renderValidMoves(this.validMovesForSelected);
         }
 
@@ -150,16 +151,51 @@ export class Renderer {
         this.ctx.restore();
     }
 
-    renderSelection(selected) {
+    /**
+     * Renders the selection ring around the chosen piece.
+     * BUG FIX: Color is now dynamically derived from the selected piece's player,
+     * not hardcoded to cyan. P1 = cyan (#00f0ff), P2 = magenta (#ff007f).
+     * @param {{row: number, col: number}} selected
+     * @param {Board} board - needed to look up the piece's player
+     */
+    renderSelection(selected, board) {
         const x = selected.col * this.tileSize;
         const y = selected.row * this.tileSize;
 
+        // Determine the correct highlight color based on which player owns the piece
+        let selectionColor = '#00f0ff'; // default cyan (Player 1)
+        if (board) {
+            const piece = board.grid[selected.row][selected.col];
+            if (piece) {
+                // PLAYER_1 = 1 (cyan), PLAYER_2 = 2 (magenta)
+                selectionColor = piece.player === 1 ? '#00f0ff' : '#ff007f';
+            }
+        }
+
         this.ctx.save();
-        this.ctx.strokeStyle = '#00f0ff';
+        this.ctx.strokeStyle = selectionColor;
         this.ctx.lineWidth = 3;
-        this.ctx.shadowColor = '#00f0ff';
-        this.ctx.shadowBlur = 15;
+        this.ctx.shadowColor = selectionColor;
+        this.ctx.shadowBlur = 18;
         this.ctx.strokeRect(x + 4, y + 4, this.tileSize - 8, this.tileSize - 8);
+
+        // Corner accent marks for a more premium selection indicator
+        const cornerSize = this.tileSize * 0.18;
+        this.ctx.lineWidth = 4;
+        const corners = [
+            [x + 4, y + 4, cornerSize, 0, cornerSize, 0],          // TL
+            [x + this.tileSize - 4, y + 4, -cornerSize, 0, 0, cornerSize], // TR
+            [x + 4, y + this.tileSize - 4, 0, -cornerSize, cornerSize, 0], // BL
+            [x + this.tileSize - 4, y + this.tileSize - 4, -cornerSize, 0, 0, -cornerSize] // BR
+        ];
+        for (const [cx, cy, dx1, dy1, dx2, dy2] of corners) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(cx + dx1, cy + dy1);
+            this.ctx.lineTo(cx, cy);
+            this.ctx.lineTo(cx + dx2, cy + dy2);
+            this.ctx.stroke();
+        }
+
         this.ctx.restore();
     }
 
